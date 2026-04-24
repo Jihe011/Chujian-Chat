@@ -1,0 +1,42 @@
+# Core
+colorama
+Flask
+openai
+psutil
+Requests
+urllib3
+certifi
+Werkzeug
+
+# Database
+SQLAlchemy
+pandas
+
+# Schedule
+apscheduler==3.10.4
+python-dateutil==2.9.0.post0
+dateparser==1.2.0
+schedule
+pytz==2024.1
+
+# UI Automation (for pywechat)
+PyAutoGUI
+pywin32>=308
+pywin32-ctypes>=0.2.2
+pywinauto>=0.6.8
+pycaw>=20240210
+uiautomation
+
+# Media
+pygame
+Pillow>=10.4.0
+
+# Utils
+emoji>=2.14.1
+cryptography>=3.0.0
+python-dotenv==1.0.1
+tenacity
+snownlp
+zhdate
+httpx-ws==0.7.2
+dashscope>=1.24.6
