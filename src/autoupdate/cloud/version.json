@@ -1,0 +1,10 @@
+{
+    "version": "1.0.0",
+    "description": "初见Chat 1.0.0",
+    "download_url": "https://github.com/Jihe011/Chujian-Chat/archive/refs/heads/main.zip",
+    "announcement": {
+        "enabled": true,
+        "title": "初见的第一个公告",
+        "content": "我们想做这样一个AI——每一次对话，都像初次见面。刚刚开始，敬请期待。"
+    }
+}

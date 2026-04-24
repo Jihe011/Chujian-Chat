@@ -1,0 +1,6 @@
+{
+  "cloud_api": {
+    "update_api_url": "https://raw.githubusercontent.com/Jihe011/Chujian-Chat/main/version.json",
+    "timeout": 10
+  }
+}
