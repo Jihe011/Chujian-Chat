@@ -1,0 +1,18 @@
+<!-- 通用下拉框选择组件: {{ key }} -->
+<select class="form-select" id="{{ key }}" name="{{ key }}">
+    {% if config.options %}
+        {% for option in config.options %}
+            {% if option is mapping %}
+                <option value="{{ option.value }}" {% if config.value == option.value %}selected{% endif %}>
+                    {{ option.label }}
+                </option>
+            {% else %}
+                <option value="{{ option }}" {% if config.value == option %}selected{% endif %}>
+                    {{ option }}
+                </option>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <option value="{{ config.value }}" selected>{{ config.value }}</option>
+    {% endif %}
+</select>

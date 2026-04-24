@@ -1,0 +1,17 @@
+<!-- 基础配置区域 -->
+<div class="config-cards-grid">
+{% for group_name, configs in config_groups.items() %}
+{% if group_name == '基础配置' %}
+{% for key, config in configs.items() %}
+<div class="config-card animate-card-bounce">
+  <div class="config-card-header">
+    <span class="config-card-title">{{ get_config_icon(key) }} {{ config.description }}</span>
+  </div>
+  <div class="config-card-body">
+    {{ render_config_item(key, config, voices=voices) }}
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+{% endfor %}
+</div>

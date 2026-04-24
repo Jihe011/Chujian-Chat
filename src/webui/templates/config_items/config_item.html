@@ -1,0 +1,87 @@
+<!-- 配置项渲染宏 -->
+{% macro render_config_item(key, config) %}
+<div class="debug-info" style="display:none;">DEBUG key={{key}} type={{config.type}} options={{config.options}}</div>
+<style>
+    .form-label {
+        transition: all 0.3s ease;
+    }
+
+    .form-label:hover {
+        color: var(--primary-color);
+    }
+
+    .badge {
+        transition: all 0.3s ease;
+    }
+
+    .badge:hover {
+        transform: scale(1.1);
+    }
+
+    .list-group-item {
+        transition: all 0.3s ease;
+    }
+
+    .list-group-item:hover {
+        transform: translateX(5px);
+        background: rgba(var(--bs-primary-rgb), 0.1);
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .form-control {
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
+<label class="form-label">
+    <span class="badge badge-info rounded-pill me-2"
+        data-bs-toggle="tooltip"
+        title="{{ key }}">
+        <i class="bi bi-info-circle"></i>
+    </span>
+    {{ config.description }}
+</label>
+
+{% if key == 'VIDEO_OMNI_METHOD' %}
+    {% include 'config_items/video_method_selector.html' %}
+{% elif key == 'VIDEO_OMNI_FPS' %}
+    {% include 'config_items/fps_slider.html' %}
+{% elif key == 'VIDEO_OMNI_BASE_URL' %}
+    {% include 'config_items/video_omni_provider.html' %}
+{% elif key.startswith('WECHAT_') %}
+    {% include 'config_items/select_dropdown.html' %}
+{% elif key == 'LISTEN_LIST' %}
+    {% include 'config_items/listen_list.html' %}
+{% elif key == 'DEEPSEEK_BASE_URL' %}
+    {% include 'config_items/api_provider.html' %}
+{% elif key == 'MODEL' %}
+    {% include 'config_items/model_selector.html' %}
+{% elif key == 'VISION_BASE_URL' %}
+    {% include 'config_items/vision_api_provider.html' %}
+{% elif key == 'VISION_MODEL' %}
+    {% include 'config_items/vision_model_selector.html' %}
+{% elif key == 'TEMPERATURE' or key == 'VISION_TEMPERATURE' %}
+    {% include 'config_items/temperature_slider.html' %}
+{% elif key == 'NETWORK_SEARCH_ENABLED' or key == 'WEBLENS_ENABLED' or config.value is boolean %}
+    {% include 'config_items/switch_toggle.html' %}
+{% elif key == 'AVATAR_DIR' %}
+    {% include 'config_items/avatar_dir_selector.html' %}
+{% elif config.options %}
+    {% include 'config_items/select_dropdown.html' %}
+{% elif config.type == 'number' %}
+    {% include 'config_items/fps_slider.html' %}
+{% else %}
+    {% include 'config_items/text_input.html' %}
+{% endif %}
+{% endmacro %}

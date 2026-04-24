@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 初见</title>
+    <link rel="icon" type="image/x-icon" href="{{ icon_path | default('/static/cu.jpg') }}">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdmirror.com/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #818cf8;
+            --accent: #f43f5e;
+            --glass-bg: rgba(255,255,255,0.39);
+            --glass-border: rgba(129,140,248, 0.14);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+        }
+        body, html {
+            height: 100%; margin: 0;
+        }
+        body {
+            min-height: 100vh;
+            background: 
+                radial-gradient(ellipse at top left, rgba(129, 140, 248, 0.13) 0%, transparent 55%),
+                radial-gradient(ellipse at 30% 70%, rgba(244, 63, 94, 0.08) 0%, transparent 40%),
+                #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .glass-panel {
+            background: var(--glass-bg);
+            border: 1.5px solid var(--glass-border);
+            backdrop-filter: blur(16px) saturate(150%) contrast(100%) brightness(104%);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 40px rgba(129, 140, 248, 0.13), 0 1.5px 8px rgba(244, 63, 94, 0.06);
+        }
+        .login-hero {
+            animation: heroFloat 18s ease-in-out infinite;
+            border-radius: var(--radius-lg);
+        }
+        @keyframes heroFloat {
+            0%,100%{transform:translateY(0) scale(1)} 40%{transform:translateY(-6px) scale(1.02)} 65%{transform:translateY(8px) scale(0.995)}
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 2.6rem 2.4rem 2.1rem 2.4rem;
+            position: relative;
+            z-index: 1;
+            animation: cardBounceIn 0.7s cubic-bezier(.54,1.74,.2,.81);
+        }
+        @keyframes cardBounceIn {
+            0% { opacity:0; transform:scale(0.96) translateY(32px); }
+            70% { opacity:.9; transform:scale(1.04) translateY(-6px); }
+            100% { opacity:1; transform:scale(1) translateY(0); }
+        }
+        .login-logo {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 18px 44px rgba(129, 140, 248, 0.22);
+            animation: loginLogoFloat 3.4s ease-in-out infinite;
+        }
+        @keyframes loginLogoFloat {
+            0%,100%{transform:translateY(0)}
+            52%{transform:translateY(-10px)}
+        }
+        .login-title {
+            font-size: 2.12rem;
+            font-weight: 700;
+            margin: 0 auto .3rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .login-subtitle {
+            font-size: 1.13rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-bottom: 1.38rem;
+        }
+        /* 新输入框卡片装饰 */
+.input-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.63);
+  border: 1.5px solid rgba(129,140,248,0.13);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 14px 0 rgba(129,140,248,0.07);
+  padding: .38rem 1.05rem .38rem .88rem;
+  margin: 0 auto 1.1rem;
+  transition: border .16s, box-shadow .16s;
+  position: relative;
+  max-width: 320px;
+}
+
+.password-card {
+  max-width: 320px;
+  margin: 0 auto 1.1rem;
+}
+        .input-card:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(129,140,248,0.09);
+        }
+        .input-card .input-icon {
+            font-size: 1.23rem;
+            color: var(--primary);
+            margin-right: .7rem;
+            flex-shrink: 0;
+            opacity: 0.89;
+        }
+        .input-card input {
+            border: none;
+            background: none;
+            box-shadow: none;
+            outline: none;
+            font-size: 1.09rem;
+            letter-spacing: .02em;
+            width: 100%;
+            padding: .31rem 0;
+        }
+        .input-card input::placeholder {
+            color: #acb5ff;
+            opacity: 0.77;
+        }
+        .input-card .password-toggle {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.11rem;
+            margin-left: .6rem;
+            transition: color .17s;
+            padding: .2rem .4rem;
+        }
+        .input-card .password-toggle:hover {
+            color: var(--accent);
+        }
+        .form-check-label { font-size:1.02rem; color: var(--primary); margin-left: 0.7rem; user-select: none; }
+        /* 更美观的checkbox美化 */
+        .form-check-input {
+            width: 1.22em;
+            height: 1.22em;
+            border-radius: 6px;
+            border: 1.8px solid #b7bef9;
+            background-color: #fff;
+            box-shadow: 0 2px 8px 0 rgba(129,140,248,0.05);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-top: 0.05em;
+            cursor:pointer;
+        }
+        .form-check-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2.5px rgba(129,140,248,0.12);
+        }
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2.5px rgba(129,140,248,0.18);
+        }
+        .form-check-input:checked[type="checkbox"] {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='3.75 9.25 7 12.25 12.25 5.5'/%3E%3C/svg%3E");
+            background-size: 80% 80%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .form-check {
+            display: flex; align-items: center; gap: 0.22rem;
+            margin-bottom:1.22rem;
+        }
+        /* 去掉自动补全和可能的黑色三角 */
+        input::-webkit-credentials-auto-fill-button,
+        input::-webkit-autofill-button,
+        input::-webkit-calendar-picker-indicator,
+        input::-webkit-search-decoration,
+        input::-webkit-search-cancel-button,
+        input::-webkit-search-results-button,
+        input::-webkit-search-results-decoration {
+            display: none !important;
+            -webkit-appearance: none !important;
+        }
+        input::-ms-reveal,
+        input[type='password']::-ms-reveal,
+        input::-ms-clear {
+            display:none!important;
+        }
+        input[type='password']::-webkit-input-placeholder,
+        input[type='text']::-webkit-input-placeholder{
+            color: #acb5ff;
+        }
+        /* Firefox */
+        input::-moz-focus-inner, input::-moz-focus-outer {
+            border: 0; box-shadow: none;
+        }
+        input[type='password']::placeholder,
+        input[type='text']::placeholder{
+            color: #acb5ff;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 0.85rem;
+            font-size: 1.08rem;
+            border-radius: var(--radius-md);
+            box-shadow: 0 6px 24px -2px rgba(129,140,248,0.11);
+            letter-spacing: 1px;
+        }
+        .alert-error { margin-top: .85rem; animation: fadeIn .3s; }
+        @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+        @media (max-width:520px){ .login-container{padding:1.15rem;} }
+    </style>
+</head>
+<body>
+    <div class="container py-5 login-hero d-flex align-items-center justify-content-center min-vh-100">
+        <div class="login-container glass-panel animate-card-bounce">
+            <div class="text-center">
+                <img src="{{ hero_path | default('/static/like.jpg') }}" alt="初见logo" id="heroLogo" class="login-logo animate__animated animate__fadeInDown" onerror="this.src='/static/like.jpg'">
+                <div class="login-title">初见</div>
+                <div class="login-subtitle"> </div>
+            </div>
+<form id="loginForm" onsubmit="handleLogin(event)">
+  <div class="input-card password-card">
+    <i class="bi bi-lock input-icon"></i>
+    <input type="password" id="password" placeholder="密码" required autocomplete="current-password">
+    <button type="button" class="password-toggle" tabindex="-1" onclick="togglePassword()" aria-label="显示/隐藏密码"><i class="bi bi-eye"></i></button>
+  </div>
+  <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" id="rememberMe">
+    <label class="form-check-label" for="rememberMe">记住我</label>
+  </div>
+  <button type="submit" class="btn btn-primary btn-login mt-1"><i class="bi bi-box-arrow-in-right me-2"></i>登录</button>
+                <div class="alert alert-danger alert-error d-none" id="errorAlert"><i class="bi bi-exclamation-triangle-fill me-2"></i><span id="errorMessage"></span></div>
+            </form>
+        </div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="toast" class="toast bg-info text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex"><div class="toast-body"></div><button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button></div>
+      </div>
+    </div>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  fetch('/system_info').then(r=>r.json()).then(data => {
+    if(data.require_password === false){
+      window.location.href = '/dashboard';
+    }
+  });
+});
+
+function handleLogin(e) {
+  e.preventDefault();
+  var password = document.getElementById('password').value;
+  var rememberMe = document.getElementById('rememberMe').checked;
+
+  console.log('开始登录...');
+  console.log('密码长度:', password.length);
+
+  fetch('/login', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    credentials: 'include',
+    body: JSON.stringify({password: password, remember_me: rememberMe})
+  })
+  .then(r => {
+    console.log('登录响应状态:', r.status);
+    return r.json();
+  })
+  .then(data => {
+    console.log('登录响应数据:', data);
+    if (data.status === 'success') {
+      console.log('登录成功，跳转到dashboard');
+      window.location.href = '/dashboard';
+    } else {
+      showError(data.message || '登录失败');
+    }
+  })
+.catch(error => {
+  console.error('登录错误:', error);
+  showError('网络错误，请重试: ' + error.message);
+});
+}
+
+function showError(msg) {
+        var alert = document.getElementById('errorAlert');
+        var msgEl = document.getElementById('errorMessage');
+        msgEl.textContent = msg;
+        alert.classList.remove('d-none');
+        alert.classList.add('show');
+        setTimeout(() => { alert.classList.remove('show'); }, 3900);
+    }
+    function togglePassword() {
+        var input = document.getElementById('password');
+        var btn = document.querySelector('.password-toggle i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            input.type = 'password';
+            btn.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    }
+function showToast(msg) {
+    var toast = document.getElementById('toast');
+    var body = toast.querySelector('.toast-body');
+    toast.classList.remove('bg-success','bg-danger','bg-info','bg-warning','text-white');
+    toast.classList.add('bg-info','text-white');
+    body.textContent = msg;
+    new bootstrap.Toast(toast).show();
+  }
+
+  </script>
+</body>
+</html>

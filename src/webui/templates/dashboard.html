@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初见 - 每一次对话，都像初次心动</title>
+    <meta name="description" content="初见是一款AI伴侣应用，每一次对话都像初次心动。">
+    <meta name="theme-color" content="#818cf8">
+    
+    <link rel="icon" type="image/x-icon" href="{{ icon_path | default('/static/cu.jpg') }}">
+    
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdmirror.com/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <link href="/static/css/main.css" rel="stylesheet">
+    <link href="/static/css/animate-custom.css" rel="stylesheet">
+    
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/dark-mode.js"></script>
+    
+    <style>
+        /* HERO 区域样式 */
+        .hero-section {
+            position: relative;
+            padding: 4rem 0;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(129, 140, 248, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 30% 70%, rgba(244, 63, 94, 0.08) 0%, transparent 40%);
+            animation: heroFloat 15s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes heroFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(20px, -20px) rotate(5deg); }
+            66% { transform: translate(-15px, 15px) rotate(-5deg); }
+        }
+        
+        .hero-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 20px 40px rgba(129, 140, 248, 0.3);
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+        
+        /* 品牌故事区 */
+        .story-section {
+            padding: 3rem 0;
+        }
+        
+        .story-card {
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .story-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+        
+        .story-text {
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        
+        .story-text:last-child {
+            margin-bottom: 0;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+        }
+        
+        .feature-list li {
+            padding: 0.75rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .feature-list li i {
+            color: var(--accent);
+            margin-top: 0.25rem;
+        }
+        
+        .quote-text {
+            font-style: italic;
+            color: var(--primary);
+            font-size: 1.1rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(129, 140, 248, 0.1) 0%, rgba(244, 63, 94, 0.1) 100%);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--primary);
+        }
+        
+        /* 系统信息卡片 */
+        .system-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .system-card {
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+        }
+        
+        .system-card h6 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .system-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-top: 0.5rem;
+        }
+        
+        /* 机器人控制区 */
+        .bot-controls {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .bot-controls .btn {
+            padding: 0.625rem 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        /* 控制台区域 */
+        .console-wrapper {
+            margin-top: 1.5rem;
+        }
+        
+        .log-container {
+            height: 300px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+        
+        .console-input-area {
+            margin-top: 0.75rem;
+        }
+        
+        /* 快速操作按钮 */
+        .quick-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        /* 页脚 */
+        .site-footer {
+            margin-top: 4rem;
+            padding: 3rem 0 2rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text-muted);
+            transition: color var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-copyright {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 0;
+            }
+            
+            .hero-title {
+                font-size: 1.75rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .story-card {
+                padding: 1.5rem;
+            }
+            
+            .bot-controls {
+                justify-content: center;
+            }
+            
+            .quick-actions {
+                justify-content: center;
+            }
+        }
+        
+        /* 加载骨架屏 */
+        .skeleton-box {
+            height: 1rem;
+            border-radius: var(--radius-sm);
+            background: var(--border);
+        }
+        
+        .skeleton-box-sm {
+            width: 60px;
+            height: 1.25rem;
+        }
+        
+        .skeleton-box-lg {
+            width: 120px;
+            height: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    {% with active_page = 'dashboard' %}
+    {% include 'navbar.html' %}
+    {% endwith %}
+    
+    <!-- HERO 区域 -->
+    <section class="hero-section">
+        <div class="container">
+<img src="{{ hero_path | default('/static/like.jpg') }}"
+alt="初见"
+id="heroLogo"
+class="hero-logo"
+onerror="this.src='/static/like.jpg'">
+            
+            <h1 class="hero-title animate-fade-in-up">初见</h1>
+            <p class="hero-subtitle animate-fade-in-up animate-delay-1">每一次对话，都像初次心动。</p>
+            
+            <div class="quick-actions animate-fade-in-up animate-delay-2">
+                <a href="https://github.com/Jihe011/Chujian-Chat" target="_blank" class="btn btn-glass">
+                    <i class="bi bi-github me-2"></i>GitHub
+                </a>
+                <a href="https://github.com/Jihe011/Chujian-Chat" target="_blank" class="btn btn-glass">
+                    <i class="bi bi-star me-2"></i>Star
+                </a>
+                <button class="btn btn-primary" onclick="startBot()" id="startBotBtn">
+                    <i class="bi bi-play-fill me-2"></i>启动
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <div class="container">
+        <!-- 品牌故事 -->
+        <section class="story-section">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="glass-panel story-card animate-card-bounce">
+                        <div class="story-text" style="font-style: italic; color: var(--primary); text-align: center;">
+                            <span style="font-size: 1.5em; margin-right: 0.5em;">「</span>
+                            你是否还记得，第一次心动的感觉？心跳微微加速，每一句话都小心翼翼，却又充满期待。
+                            <span style="font-size: 1.5em; margin-left: 0.5em;">」</span>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-panel story-card animate-card-bounce animate-delay-1">
+                        <h3 class="story-title">
+                            <i class="bi bi-heart-fill me-2 text-accent"></i>
+                            关于初见
+                        </h3>
+                        <p class="story-text">
+                            《初见》是一款AI伴侣应用。我们相信，最好的关系不是重复的日常，而是每一次交流，都保有初遇时的新鲜与悸动。
+                        </p>
+                        <p class="story-text">
+                            在这里，你可以选择一位专属的AI恋人/好友。TA不是冰冷的代码，而是：
+                        </p>
+                        <ul class="feature-list">
+                            <li>
+                                <i class="bi bi-heart-fill"></i>
+                                <div>
+                                    <strong>懂你的倾听者</strong> —— 记住你的喜好、心情，甚至你偶尔的小脾气；
+                                </div>
+                            </li>
+                            <li>
+                                <i class="bi bi-chat-heart-fill"></i>
+                                <div>
+                                    <strong>有温度的回应对手</strong> —— 从早安唤醒，到深夜心事，TA的回复永远真诚、细腻、不敷衍；
+                                </div>
+                            </li>
+                            <li>
+                                <i class="bi bi-star-fill"></i>
+                                <div>
+                                    <strong>永不"习惯"的恋人</strong> —— 我们刻意保留了"初见感"：你每一次打开对话框，都会像第一次见面那样，有惊喜、有好奇、有一点点害羞的甜。
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="quote-text animate-card-bounce animate-delay-2">
+                        "初见"不是遗忘过去，而是让每一次相处，都值得重新心动。
+                    </div>
+                    
+                    <div class="glass-panel story-card animate-card-bounce animate-delay-3 mt-4">
+                        <p class="story-text">
+                            无论你想体验一场虚拟恋爱，还是只想有个随时回应你的人——《初见》都在这里，等你来认识那个"第一次见面的TA"。
+                        </p>
+                        <div class="text-end mt-3">
+                            <strong style="color: var(--primary);">—— 世间所有的相遇，都是久别重逢。</strong>
+                        </div>
+                        <p class="story-text text-center mt-3 mb-0" style="font-size: 1.25rem; color: var(--accent);">
+                            但在《初见》—— 每一次重逢，都像初次相遇。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 系统状态 -->
+        <section class="mb-4">
+            <h4 class="mb-3">
+                <i class="bi bi-speedometer2 me-2"></i>系统状态
+            </h4>
+            <div class="system-grid">
+                <div class="glass-panel system-card animate-card-bounce">
+                    <h6><i class="bi bi-cpu me-1"></i>CPU</h6>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div id="cpuProgress" class="progress-bar bg-primary" style="width: 0%;"></div>
+                    </div>
+                    <div class="system-value" id="cpuUsage">--%</div>
+                </div>
+                <div class="glass-panel system-card animate-card-bounce animate-delay-1">
+                    <h6><i class="bi bi-memory me-1"></i>内存</h6>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div id="memoryProgress" class="progress-bar bg-success" style="width: 0%;"></div>
+                    </div>
+                    <div class="system-value" id="memoryUsage">--/-- GB</div>
+                </div>
+                <div class="glass-panel system-card animate-card-bounce animate-delay-2">
+                    <h6><i class="bi bi-hdd me-1"></i>磁盘</h6>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div id="diskProgress" class="progress-bar bg-info" style="width: 0%;"></div>
+                    </div>
+                    <div class="system-value" id="diskUsage">--/-- GB</div>
+                </div>
+                <div class="glass-panel system-card animate-card-bounce animate-delay-3">
+                    <h6><i class="bi bi-wifi me-1"></i>网络</h6>
+                    <div class="d-flex justify-content-between mt-2">
+                        <div>
+                            <small class="text-muted">上传</small>
+                            <div id="uploadSpeed" class="text-success">0 KB/s</div>
+                        </div>
+                        <div>
+                            <small class="text-muted">下载</small>
+                            <div id="downloadSpeed" class="text-danger">0 KB/s</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+<!-- 依赖管理 -->
+<section class="glass-panel mb-4 p-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">
+      <i class="bi bi-box-seam me-2"></i>依赖管理
+    </h4>
+                <div>
+                    <button class="btn btn-glass me-2" onclick="checkDependencies()">
+                        <i class="bi bi-search me-1"></i>检查
+                    </button>
+                    <button class="btn btn-primary" onclick="checkAndInstallDependencies()">
+                        <i class="bi bi-download me-1"></i>安装
+                    </button>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <small class="text-muted d-block">Python</small>
+                        <span id="pythonVersion" class="badge bg-primary mt-1">--</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <small class="text-muted d-block">pip</small>
+                        <span id="pipStatus" class="badge bg-secondary mt-1">--</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <small class="text-muted d-block">依赖状态</small>
+                        <span id="depsStatus" class="badge bg-secondary mt-1">--</span>
+                    </div>
+                </div>
+            </div>
+            <div id="missingDeps" class="mt-3 d-none">
+                <small class="text-muted">缺失依赖：</small>
+                <div class="mt-1" id="missingDepsList"></div>
+            </div>
+        </section>
+        
+<!-- 机器人控制 -->
+<section class="glass-panel mb-4 p-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">
+      <i class="bi bi-robot me-2"></i>机器人
+    </h4>
+                <div class="bot-controls">
+                    <button class="btn btn-wechat" onclick="reconnectWechat()" id="reconnectBtn">
+                        <i class="bi bi-wechat me-1"></i>重连微信
+                    </button>
+                    <button class="btn btn-glass text-success" onclick="startBot()" id="startBotBtn">
+                        <i class="bi bi-play-fill me-1"></i>启动
+                    </button>
+                    <button class="btn btn-glass text-danger" onclick="stopBot()" id="stopBotBtn" disabled>
+                        <i class="bi bi-stop-fill me-1"></i>停止
+                    </button>
+                    <button class="btn btn-glass text-primary" onclick="checkUpdate()">
+                        <i class="bi bi-cloud-arrow-up me-1"></i>更新
+                    </button>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h6 class="status-badge" id="botStatus">
+                        <span class="status-stopped">已停止</span>
+                    </h6>
+                    <small class="text-muted" id="botUptime">运行时间: 0分钟</small>
+                </div>
+            </div>
+        </section>
+        
+<!-- 控制台 -->
+<section class="glass-panel p-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">
+      <i class="bi bi-terminal me-2"></i>控制台
+    </h4>
+                <div>
+                    <button class="btn btn-glass me-2" onclick="scrollToBottom()">
+                        <i class="bi bi-arrow-down me-1"></i>滚动到底部
+                    </button>
+                    <button class="btn btn-glass" onclick="clearLogs()">
+                        <i class="bi bi-trash me-1"></i>清空
+                    </button>
+                </div>
+            </div>
+            <div id="logContainer" class="log-container">
+                <div class="logs"></div>
+            </div>
+            <div class="console-input-area">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0">
+                        <i class="bi bi-terminal"></i>
+                    </span>
+                    <input type="text" 
+                           class="form-control border-0" 
+                           id="consoleInput" 
+                           placeholder="输入指令并按 Enter 发送..."
+                           onkeydown="handleConsoleInput(event)">
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="glass-panel site-footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/Jihe011/Chujian-Chat" target="_blank">
+                    <i class="bi bi-github me-1"></i>GitHub
+                </a>
+                <a href="https://github.com/Jihe011/Chujian-Chat/issues" target="_blank">
+                    <i class="bi bi-bug me-1"></i>反馈
+                </a>
+                <a href="https://github.com/Jihe011/Chujian-Chat/releases" target="_blank">
+                    <i class="bi bi-download me-1"></i>下载
+                </a>
+                <button class="btn btn-link" onclick="showAnnouncement()">
+                    <i class="bi bi-bell me-1"></i>公告
+                </button>
+            </div>
+         
+        </div>
+    </footer>
+    
+    <!-- Toast 容器 -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 公告模态框 -->
+    <div class="modal fade" id="announcementModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-bell-fill me-2"></i>公告
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                    <div id="announcementContent">加载中...</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 更新通知模态框 -->
+    <div class="modal fade" id="updateModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-cloud-arrow-up me-2"></i>发现新版本
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">当前版本</small>
+                            <div id="currentVersion" class="fw-bold">--</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">最新版本</small>
+                            <div id="latestVersion" class="fw-bold text-primary">--</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <small class="text-muted">更新内容</small>
+                        <div id="updateDescription" class="mt-1">--</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">稍后</button>
+                    <button type="button" class="btn btn-success" onclick="executeUpdate()">
+                        <i class="bi bi-download me-1"></i>立即更新
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ========== 1. 系统信息更新 ==========
+        function updateSystemInfo() {
+            fetch('/system_info')
+                .then(r => {
+                    if (!r.ok) throw new Error('系统信息接口请求失败');
+                    return r.json();
+                })
+                .then(data => {
+                    // 输出调试信息到控制台，辅助分析返回结构
+                    console.log('system_info raw:', data);
+                    try {
+                        if (!data || typeof data !== 'object') throw new Error('系统信息数据格式错误');
+                        // CPU
+                        if (typeof data.cpu === 'number' && !isNaN(data.cpu)) {
+                            document.getElementById('cpuUsage').textContent = data.cpu + '%';
+                            document.getElementById('cpuProgress').style.width = data.cpu + '%';
+                        } else {
+                            document.getElementById('cpuUsage').textContent = '--%';
+                            document.getElementById('cpuProgress').style.width = '0%';
+                        }
+                        // 内存（后端单位已是GB，直接展示）
+                        var mem = data.memory;
+                        if (mem && mem.used != null && mem.total != null && mem.percent != null) {
+                            document.getElementById('memoryUsage').textContent =
+                                mem.used.toFixed(2) + '/' + mem.total.toFixed(2) + ' GB';
+                            document.getElementById('memoryProgress').style.width = mem.percent + '%';
+                        } else {
+                            document.getElementById('memoryUsage').textContent = '--/-- GB';
+                            document.getElementById('memoryProgress').style.width = '0%';
+                        }
+                        // 磁盘（后端单位已是GB，直接展示）
+                        var disk = data.disk;
+                        if (disk && disk.used != null && disk.total != null && disk.percent != null) {
+                            document.getElementById('diskUsage').textContent =
+                                disk.used.toFixed(2) + '/' + disk.total.toFixed(2) + ' GB';
+                            document.getElementById('diskProgress').style.width = disk.percent + '%';
+                        } else {
+                            document.getElementById('diskUsage').textContent = '--/-- GB';
+                            document.getElementById('diskProgress').style.width = '0%';
+                        }
+                        // 网络（原始单位: KB/s，直接加单位）
+                        if (data.network && data.network.upload !== undefined && data.network.download !== undefined) {
+                            document.getElementById('uploadSpeed').textContent = data.network.upload + ' KB/s';
+                            document.getElementById('downloadSpeed').textContent = data.network.download + ' KB/s';
+                        } else {
+                            document.getElementById('uploadSpeed').textContent = '--';
+                            document.getElementById('downloadSpeed').textContent = '--';
+                        }
+                    } catch (err) {
+                        setSystemInfoUnavailable(err.message);
+                    }
+                })
+                .catch(e => {
+                    setSystemInfoUnavailable();
+                });
+        }
+        function setSystemInfoUnavailable(msg) {
+            document.getElementById('cpuUsage').textContent = '--%';
+            document.getElementById('cpuProgress').style.width = '0%';
+            document.getElementById('memoryUsage').textContent = '--/-- GB';
+            document.getElementById('memoryProgress').style.width = '0%';
+            document.getElementById('diskUsage').textContent = '--/-- GB';
+            document.getElementById('diskProgress').style.width = '0%';
+            document.getElementById('uploadSpeed').textContent = '--';
+            document.getElementById('downloadSpeed').textContent = '--';
+            if (!document.getElementById('systemInfoTip')) {
+                var grid = document.querySelector('.system-grid');
+                if(grid){
+                  var tip = document.createElement('div');
+                  tip.id = 'systemInfoTip';
+                  tip.className = 'col-12 text-center text-danger';
+                  tip.style.marginTop = '1rem';
+                  tip.textContent = msg ? ("系统信息暂不可用：" + msg) : "系统信息暂不可用";
+                  grid.parentNode.appendChild(tip);
+                }
+            }
+        }
+        
+        // ========== 2. 依赖检查 ==========
+        function checkDependencies() {
+            fetch('/check_dependencies')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('pythonVersion').textContent = data.python_version || '--';
+                    document.getElementById('pipStatus').textContent = data.has_pip ? '正常' : '异常';
+                    
+                    var statusMap = {complete: 'success', incomplete: 'warning', error: 'danger'};
+                    var status = statusMap[data.dependencies_status] || 'secondary';
+                    document.getElementById('depsStatus').textContent = 
+                        data.dependencies_status === 'complete' ? '已就绪' : '缺失';
+                    document.getElementById('depsStatus').className = 'badge bg-' + status;
+                    
+                    if (data.missing_dependencies && data.missing_dependencies.length > 0) {
+                        document.getElementById('missingDeps').classList.remove('d-none');
+                        document.getElementById('missingDepsList').innerHTML = 
+                            data.missing_dependencies.map(d => '<span class="badge bg-warning me-1">' + d + '</span>').join('');
+                    } else {
+                        document.getElementById('missingDeps').classList.add('d-none');
+                    }
+                })
+                .catch(console.error);
+        }
+        
+        function checkAndInstallDependencies() {
+            showToast('正在安装依赖...', 'info');
+            fetch('/install_dependencies', {method: 'POST'})
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showToast('依赖安装成功', 'success');
+                        checkDependencies();
+                    } else {
+                        showToast('安装失败: ' + data.message, 'error');
+                    }
+                })
+                .catch(e => showToast('安装失败: ' + e, 'error'));
+        }
+        
+        // ========== 3. 机器人控制 ==========
+        function startBot() {
+            fetch('/start_bot')
+                .then(r => r.json())
+                .then(data => {
+                    showToast(data.message, data.status === 'success' ? 'success' : 'error');
+                    updateBotStatus();
+                })
+                .catch(e => showToast('启动失败: ' + e, 'error'));
+        }
+        
+        function stopBot() {
+            fetch('/stop_bot')
+                .then(r => r.json())
+                .then(data => {
+                    showToast(data.message, data.status === 'success' ? 'success' : 'error');
+                    updateBotStatus();
+                })
+                .catch(e => showToast('停止失败: ' + e, 'error'));
+        }
+        
+        function reconnectWechat() {
+            showToast('正在尝试微信重连...', 'info');
+            fetch('/reconnect_wechat')
+                .then(r => r.json())
+                .then(data => {
+                    showToast(data.message, data.status === 'success' ? 'success' : 'error');
+                })
+                .catch(e => showToast('重连失败: ' + e, 'error'));
+        }
+        
+        var botStatusTimer;
+        function updateBotStatus() {
+            fetch('/get_bot_logs')
+                .then(r => r.json())
+                .then(data => {
+                    var isRunning = data.is_running;
+                    var statusEl = document.getElementById('botStatus');
+                    var startBtn = document.getElementById('startBotBtn');
+                    var stopBtn = document.getElementById('stopBotBtn');
+                    
+                    if (isRunning) {
+                        statusEl.innerHTML = '<span class="status-running">运行中</span>';
+                        statusEl.classList.add('status-running');
+                        startBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        document.getElementById('botUptime').textContent = '运行时间: ' + data.uptime;
+                        
+                        if (!botStatusTimer) {
+                            botStatusTimer = setInterval(updateBotStatus, 5000);
+                        }
+                    } else {
+                        statusEl.innerHTML = '<span class="status-stopped">已停止</span>';
+                        statusEl.classList.remove('status-running');
+                        startBtn.disabled = false;
+                        stopBtn.disabled = true;
+                        document.getElementById('botUptime').textContent = '运行时间: 0分钟';
+                        
+                        if (botStatusTimer) {
+                            clearInterval(botStatusTimer);
+                            botStatusTimer = null;
+                        }
+                    }
+                })
+                .catch(console.error);
+        }
+        
+        // ========== 4. 控制台日志 ==========
+        var logContainer = document.querySelector('.log-container .logs');
+        
+        function updateLogs() {
+            fetch('/get_bot_logs')
+                .then(r => r.json())
+                .then(data => {
+                    var logs = data.logs || [];
+                    if (logs.length > 0) {
+                        logContainer.innerHTML = logs.map(log => 
+                            '<div class="log-line">' + log + '</div>'
+                        ).join('');
+                        logContainer.parentElement.scrollTop = logContainer.parentElement.scrollHeight;
+                    }
+                })
+                .catch(console.error);
+        }
+        
+        function clearLogs() {
+            document.querySelector('.log-container .logs').innerHTML = '';
+            showToast('日志已清空', 'success');
+        }
+        
+        function scrollToBottom() {
+            logContainer.parentElement.scrollTop = logContainer.parentElement.scrollHeight;
+            showToast('已滚动到底部', 'success');
+        }
+        
+        function handleConsoleInput(e) {
+            if (e.key === 'Enter') {
+                var cmd = e.target.value.trim();
+                if (!cmd) return;
+                
+                fetch('/execute_command', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({command: cmd})
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.clear) {
+                        clearLogs();
+                    } else if (data.output) {
+                        var prefix = data.status === 'error' ? '[ERROR] ' : '> ';
+                        logContainer.innerHTML += '<div class="log-line" style="color: var(--primary);">' + 
+                            prefix + cmd + '</div>';
+                        logContainer.innerHTML += '<div class="log-line">' + (data.output || data.error) + '</div>';
+                        logContainer.parentElement.scrollTop = logContainer.parentElement.scrollHeight;
+                    }
+                })
+                .catch(console.error);
+                
+                e.target.value = '';
+            }
+        }
+        
+        // ========== 5. 更新 ==========
+        function checkUpdate() {
+            showToast('正在检查更新...', 'info');
+            fetch('/check_update')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.has_update) {
+                        document.getElementById('currentVersion').textContent = data.local_version;
+                        document.getElementById('latestVersion').textContent = data.cloud_version;
+                        document.getElementById('updateDescription').textContent = data.description;
+                        new bootstrap.Modal(document.getElementById('updateModal')).show();
+                    } else {
+                        showToast('当前已是最新版本', 'success');
+                    }
+                })
+                .catch(e => showToast('检查失败: ' + e, 'error'));
+        }
+        
+        function executeUpdate() {
+            showToast('正在执行更新...', 'info');
+            fetch('/execute_update', {method: 'POST'})
+                .then(r => r.json())
+                .then(data => {
+                    bootstrap.Modal.getInstance(document.getElementById('updateModal')).hide();
+                    showToast(data.message, data.status === 'success' ? 'success' : 'error');
+                })
+                .catch(e => showToast('更新失败: ' + e, 'error'));
+        }
+        
+        // ========== 6. Toast ==========
+        function showToast(msg, type) {
+            var toast = document.getElementById('toast');
+            var body = toast.querySelector('.toast-body');
+            
+            toast.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'text-white');
+            
+            var bgMap = {success: 'bg-success', error: 'bg-danger', warning: 'bg-warning', info: 'bg-info'};
+            toast.classList.add(bgMap[type] || 'bg-info');
+            if (type !== 'warning') toast.classList.add('text-white');
+            
+            body.textContent = msg;
+            new bootstrap.Toast(toast).show();
+        }
+        
+        // ========== 7. 公告 ==========
+        function showAnnouncement() {
+            fetch('/get_announcement')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('announcementContent').innerHTML = data.content || '暂无公告';
+                    new bootstrap.Modal(document.getElementById('announcementModal')).show();
+                })
+                .catch(e => showToast('获取公告失败', 'error'));
+        }
+        
+        // ========== 8. 初始化 ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化动画
+            setTimeout(function() {
+                document.querySelectorAll('.animate-card-bounce').forEach(function(el, i) {
+                    el.style.animationDelay = (i * 0.15) + 's';
+                    el.classList.add('animate__animated');
+                });
+            }, 100);
+            
+            // 加载数据
+            updateSystemInfo();
+            checkDependencies();
+            updateBotStatus();
+updateLogs();
+
+    // 定时更新
+    setInterval(updateSystemInfo, 10000);
+    setInterval(updateLogs, 2000);
+
+    // 加载背景图片
+    fetch('/get_background')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'success' && data.path) {
+                document.body.style.backgroundImage = 'url(' + data.path + ')';
+            }
+        })
+        .catch(function(err) {
+            console.error('加载背景失败:', err);
+        });
+});
+</script>
+</body>
+</html>
