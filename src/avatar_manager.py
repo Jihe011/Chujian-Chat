@@ -1,107 +1,119 @@
+from pathlib import Path
 import os
-import json
-from flask import Blueprint, request, jsonify, render_template
-from data.config import config
+import shutil
 
-avatar_manager = Blueprint('avatar_manager', __name__)
+AVATARS_DIR = Path('data/avatars')
 
-@avatar_manager.route('/load_avatar', methods=['GET'])
-def load_avatar():
-    """加载 avatar.md 内容"""
-    avatar_path = os.path.join(config.behavior.context.avatar_dir, 'avatar.md')
-    if not os.path.exists(avatar_path):
-        return jsonify({'status': 'error', 'message': '文件不存在'})
-
-    try:
-        with open(avatar_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-
-        # 将内容分割成不同区域，使用英文键名以匹配前端
-        sections = {}
-        section_mapping = {
-            '任务': 'task',
-            '角色': 'role',
-            '外表': 'appearance',
-            '经历': 'experience',
-            '性格': 'personality',
-            '经典台词': 'classic_lines',
-            '喜好': 'preferences',
-            '备注': 'notes'
-        }
-
-        current_section = None
-        current_content = []
-
-        # 按行读取并处理内容
-        for line in content.split('\n'):
-            line = line.strip()
-            if line.startswith('# '):
-                # 如果找到新的部分，保存之前的内容
-                if current_section:
-                    sections[current_section] = '\n'.join(current_content).strip()
-                    current_content = []
-                
-                # 获取新部分的标题
-                section_title = line[2:].strip()
-                current_section = section_mapping.get(section_title)
-            elif current_section and line:
-                current_content.append(line)
-
-        # 保存最后一个部分的内容
-        if current_section and current_content:
-            sections[current_section] = '\n'.join(current_content).strip()
-
-        print("读取到的内容:", sections)  # 调试信息
-        return jsonify({'status': 'success', 'content': sections})
-
-    except Exception as e:
-        print(f"读取文件错误: {e}")  # 调试信息
-        return jsonify({'status': 'error', 'message': str(e)})
-
-@avatar_manager.route('/save_avatar', methods=['POST'])
-def save_avatar():
-    """保存 avatar.md 内容"""
-    data = request.json
-    print('接收到的数据:', data)  # 调试信息
-
-    defalut_avatar_name = config.behavior.context.avatar_dir.split('/')[-1]  # 默认人设名称
-    avatar_name = data.get('avatar', defalut_avatar_name)  # 获取人设名称
-    avatar_path = os.path.join(
-        os.path.dirname(config.behavior.context.avatar_dir),
-        avatar_name, 
-        'avatar.md'
-    )
-
-    if not os.path.exists(avatar_path):
-        return jsonify({'status': 'error', 'message': '文件不存在'})
-
-    # 使用中文标题保存内容
-    section_mapping = {
-        'task': '任务',
-        'role': '角色',
-        'appearance': '外表',
-        'experience': '经历',
-        'personality': '性格',
-        'classic_lines': '经典台词',
-        'preferences': '喜好',
-        'notes': '备注'
+def read_avatar_sections(file_path):
+    sections = {
+        'task': '',
+        'role': '',
+        'appearance': '',
+        'experience': '',
+        'personality': '',
+        'classic_lines': '',
+        'preferences': '',
+        'notes': ''
     }
+    
+    current_section = None
+    content = []
+    
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+            
+            for line in lines:
+                line = line.strip()
+                if line.startswith('# '):
+                    # 如果之前有section，保存其内容
+                    if current_section and content:
+                        sections[current_section.lower()] = '\n'.join(content).strip()
+                        content = []
+                    # 获取新的section名称
+                    current_section = line[2:].lower()
+                elif current_section and line:
+                    content.append(line)
+            
+            # 保存最后一个section的内容
+            if current_section and content:
+                sections[current_section.lower()] = '\n'.join(content).strip()
+                
+        return sections
+    except Exception as e:
+        print(f"Error reading avatar file: {e}")
+        return sections
 
-    # 重新构建内容
-    content = ""
-    for en_section, cn_section in section_mapping.items():
-        section_content = data.get(en_section, '') if data is not None else ''
-        if section_content:  # 只写入非空内容
-            content += f"# {cn_section}\n{section_content}\n\n"
+def save_avatar_sections(file_path, sections):
+    """保存人设设定到文件"""
+    try:
+        content = []
+        for section, text in sections.items():
+            # 将section名称首字母大写
+            section_name = section.replace('_', ' ').title()
+            content.append(f"# {section_name}")
+            content.append(text.strip())
+            content.append("")  # 添加空行分隔
+            
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write('\n'.join(content))
+        return True
+    except Exception as e:
+        print(f"Error saving avatar file: {e}")
+        return False
 
-    with open(avatar_path, 'w', encoding='utf-8') as f:
-        f.write(content.strip())
+def create_avatar(avatar_name):
+    """创建新的人设目录和文件"""
+    try:
+        avatar_dir = AVATARS_DIR / avatar_name
+        if avatar_dir.exists():
+            return False, "人设已存在"
+            
+        # 创建目录结构
+        avatar_dir.mkdir(parents=True, exist_ok=True)
+        (avatar_dir / 'emojis').mkdir(exist_ok=True)
+        
+        # 创建avatar.md文件
+        avatar_file = avatar_dir / 'avatar.md'
+        template_sections = {
+            'task': '请在此处描述角色的任务和目标',
+            'role': '请在此处描述角色的基本信息',
+            'appearance': '请在此处描述角色的外表特征',
+            'experience': '请在此处描述角色的经历和背景故事',
+            'personality': '请在此处描述角色的性格特点',
+            'classic_lines': '请在此处列出角色的经典台词',
+            'preferences': '请在此处描述角色的喜好',
+            'notes': '其他需要补充的信息'
+        }
+        
+        save_avatar_sections(avatar_file, template_sections)
+        return True, "人设创建成功"
+    except Exception as e:
+        return False, str(e)
 
-    return jsonify({'status': 'success', 'message': '保存成功'})
+def delete_avatar(avatar_name):
+    """删除人设"""
+    try:
+        avatar_dir = AVATARS_DIR / avatar_name
+        if not avatar_dir.exists():
+            return False, "人设不存在"
+            
+        shutil.rmtree(avatar_dir)
+        return True, "人设删除成功"
+    except Exception as e:
+        return False, str(e)
 
-@avatar_manager.route('/edit_avatar', methods=['GET'])
-def edit_avatar():
-    """角色设定页面"""
-    from data.config import config
-    require_password = config.auth.require_password
-    return render_template('edit_avatar.html', active_page='edit_avatar', require_password=require_password)
+def get_available_avatars():
+    """获取所有可用的人设列表"""
+    try:
+        if not AVATARS_DIR.exists():
+            return []
+            
+        return [d.name for d in AVATARS_DIR.iterdir() if d.is_dir()]
+    except Exception as e:
+        print(f"Error getting available avatars: {e}")
+        return []
+
+def get_avatar_file_path(avatar_name):
+    """获取人设文件路径"""
+    return AVATARS_DIR / avatar_name / 'avatar.md' 
