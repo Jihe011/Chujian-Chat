@@ -4,6 +4,23 @@
 
 基于 [KouriChat](https://github.com/KouriChat/KouriChat) 改写的微信对话机器人，保留核心功能并简化配置。
 
+## 已知 Bug
+
+- `_sync_timestamps` 存储空字符串，导致 `msg['time']` 始终为 None——但 `_pull_messages` 不返回时间戳字段，暂时无法修复
+- `main.py` 中 `first_run` 过滤器因 `msg_time=None` 会静默跳过第一轮消息
+- `main.py` 中 main logger 的 `propagate=False` 导致 INFO 日志不在文件记录中（仅控制台可见）
+
+## 项目计划
+
+- [x] 角色时间感知——超 30 分钟自动开启新话题
+- [x] 消息序列号修复 —— 相同内容消息不再被去重拦截
+- [x] 媒体类型映射 —— 中文 type 正确转为英文
+- [x] save_media 线程安全加锁
+- [x] 日志分级重构 —— 控制台仅 main 的 INFO+，文件全部 INFO+
+- [ ] 修复 `_sync_timestamps` 时间戳存储
+- [ ] 优化 `first_run` 过滤逻辑
+- [ ] 测试全套回归
+
 ## 特性
 
 ### 🤖 AI 对话
