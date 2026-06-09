@@ -7,15 +7,15 @@
 ## 已知 Bug和项目计划
 
 ### 已知bug
-- `_sync_timestamps` 存储空字符串，导致 `msg['time']` 始终为 None——但 `_pull_messages` 不返回时间戳字段，暂时无法修复
-- `main.py` 中 `first_run` 过滤器因 `msg_time=None` 会静默跳过第一轮消息
-- `main.py` 中 main logger 的 `propagate=False` 导致 INFO 日志不在文件记录中（仅控制台可见）
+- 可能会无法收到新消息（已修复）
+- 可能会反复处理消息（已修复）
+- 角色对信息间隔不理解（已修复）
 
 ### 项目计划
 
 - [ ] 在下一版本中添加角色状态模块
 - [ ] 开发对于抖音私信的支持
-- [ ]开发初见claw以添加对微信claw的支持
+- [ ] 开发初见claw以添加对微信claw的支持
 
 ## 特性
 
