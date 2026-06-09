@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安全设置</title>
+<link rel="icon" type="image/x-icon" href="{{ icon_path | default('/static/cu.jpg') }}">
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdmirror.com/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="/static/css/main.css" rel="stylesheet">
+<link href="/static/css/animate-custom.css" rel="stylesheet">
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/dark-mode.js"></script>
+<style>
+.config-page {
+  max-width: 650px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+.page-header {
+  padding-top: 1rem;
+}
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.25);
+}
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1060;
+}
+</style>
+</head>
+<body>
+{% include 'navbar.html' %}
+
+<div class="container config-page">
+  <div class="page-header mb-4 animate-fade-in-up">
+    <h2 class="gradient-text" style="font-size: 1.75rem; font-weight: 700;">
+      <i class="bi bi-shield-lock me-2"></i>安全设置
+    </h2>
+    <p class="text-muted mb-0">管理您的账户安全</p>
+  </div>
+
+  <div id="statusBadge" class="badge bg-danger mb-3 animate-fade-in-up">
+    <i class="bi bi-person-x me-1"></i>未登录
+  </div>
+
+  <div id="loginCard" class="glass-panel p-4 mb-4 animate-card-bounce">
+    <h5 class="mb-3"><i class="bi bi-key-fill me-2"></i>账户登录</h5>
+    <div id="loginError" class="alert alert-danger d-none" role="alert">
+      <i class="bi bi-exclamation-triangle me-1"></i>
+      <span id="loginErrorMsg"></span>
+    </div>
+    <form id="loginForm">
+      <div class="mb-3">
+        <label for="loginPwd" class="form-label">登录密码</label>
+        <input type="password" class="form-control" id="loginPwd" placeholder="输入密码登录" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100" id="loginBtn">
+        <span class="btn-text"><i class="bi bi-box-arrow-in-right me-2"></i>登录</span>
+        <span class="btn-loading d-none"><i class="bi bi-arrow-repeat me-2 spin"></i>登录中...</span>
+      </button>
+    </form>
+  </div>
+
+  <div id="configCard" class="glass-panel p-4 mb-4 animate-card-bounce" style="display: none;">
+    <h5 class="mb-3"><i class="bi bi-shield-check me-2"></i>密码管理</h5>
+    <form id="pwdForm">
+      <div class="mb-3">
+        <label for="oldPwd" class="form-label">当前密码</label>
+        <input type="password" class="form-control" id="oldPwd" placeholder="输入当前密码" autocomplete="current-password" required>
+      </div>
+      <div class="mb-3">
+        <label for="newPwd" class="form-label">新密码</label>
+        <input type="password" class="form-control" id="newPwd" placeholder="输入新密码（至少5位）" autocomplete="new-password" required>
+      </div>
+      <div class="mb-3">
+        <label for="confirmPwd" class="form-label">确认新密码</label>
+        <input type="password" class="form-control" id="confirmPwd" placeholder="重复新密码" autocomplete="new-password" required>
+      </div>
+      <button type="submit" class="btn btn-outline-primary">
+        <i class="bi bi-check-lg me-2"></i>修改密码
+      </button>
+    </form>
+  </div>
+
+  <div id="protectCard" class="glass-panel p-4 animate-card-bounce animate-delay-1" style="display: none;">
+    <div class="d-flex align-items-center justify-content-between">
+      <div>
+        <h5 class="mb-1"><i class="bi bi-toggle2-on me-2"></i>登录密码保护</h5>
+        <p class="text-muted mb-0" id="protectDesc">当前为免登录模式</p>
+      </div>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="protectSwitch" style="width: 2.5em; height: 1.3em;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle"><i class="bi bi-question-circle me-2"></i>确认操作</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="password" id="modalPwd" class="form-control" placeholder="输入密码" autocomplete="current-password">
+        <p id="modalDesc" class="text-muted mt-2 mb-0"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="modalOk">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container">
+  <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <i class="bi bi-info-circle me-1"></i>
+      <strong class="me-auto">提示</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+    </div>
+    <div class="toast-body"></div>
+  </div>
+</div>
+
+<style>
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+</style>
+
+<script>
+(function() {
+  var isLogin = false;
+  var needPwd = false;
+  var modalType = '';
+  var confirmModal = null;
+
+  window.onload = function() {
+    // 加载背景图片
+    fetch('/get_background')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'success' && data.path) {
+                document.body.style.backgroundImage = 'url(' + data.path + ')';
+            }
+        })
+        .catch(function(err) {
+            console.error('加载背景失败:', err);
+        });
+
+    confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    document.getElementById('confirmModal').addEventListener('hidden.bs.modal', function() {
+      document.getElementById('protectSwitch').checked = needPwd;
+    });
+    loadInfo();
+  };
+
+  function loadInfo() {
+    fetch('/system_info', { credentials: 'include' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        needPwd = data.require_password || false;
+        if (!needPwd) {
+          // 保护关闭时，强制 isLogin = true 防止 bug
+          isLogin = true;
+        } else {
+          isLogin = data.logged_in || false;
+        }
+        updateUI();
+      })
+      .catch(function(err) {
+        console.error('加载失败:', err);
+        showToast('加载失败', 'danger');
+      });
+  }
+
+function updateUI() {
+  var statusBadge = document.getElementById('statusBadge');
+  var loginCard = document.getElementById('loginCard');
+  var configCard = document.getElementById('configCard');
+  var protectCard = document.getElementById('protectCard');
+  var protectSwitch = document.getElementById('protectSwitch');
+  var protectDesc = document.getElementById('protectDesc');
+
+  if (!needPwd) {
+    // 保护关闭：只有打开保护开关
+    statusBadge.className = 'badge bg-secondary mb-3 animate-fade-in-up';
+    statusBadge.innerHTML = '<i class="bi bi-shield-lock me-1"></i>保护已关闭';
+    loginCard.style.display = 'none';
+    configCard.style.display = 'none';
+    protectCard.style.display = 'block';
+    protectSwitch.checked = false;
+    protectDesc.textContent = '点击开关开启登录密码保护';
+  } else if (!isLogin) {
+    // 保护开启 + 未登录：显示登录表单
+    statusBadge.className = 'badge bg-danger mb-3 animate-fade-in-up';
+    statusBadge.innerHTML = '<i class="bi bi-person-x me-1"></i>未登录';
+    loginCard.style.display = 'block';
+    configCard.style.display = 'none';
+    protectCard.style.display = 'none';
+  } else {
+    // 保护开启 + 已登录：显示修改密码 + 关闭保护
+    statusBadge.className = 'badge bg-success mb-3 animate-fade-in-up';
+    statusBadge.innerHTML = '<i class="bi bi-shield-check me-1"></i>已登录';
+    loginCard.style.display = 'none';
+    configCard.style.display = 'block';
+    protectCard.style.display = 'block';
+    protectSwitch.checked = true;
+    protectDesc.textContent = '输入当前密码验证后可关闭保护';
+  }
+}
+
+  function showToast(msg, type) {
+    var toast = document.getElementById('toast');
+    var toastBody = toast.querySelector('.toast-body');
+    var toastHeader = toast.querySelector('.toast-header i');
+
+    toast.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info');
+    if (type === 'success') {
+      toast.classList.add('bg-success', 'text-white');
+      toastHeader.className = 'bi bi-check-circle me-1';
+    } else if (type === 'danger') {
+      toast.classList.add('bg-danger', 'text-white');
+      toastHeader.className = 'bi bi-x-circle me-1';
+    } else if (type === 'warning') {
+      toast.classList.add('bg-warning', 'text-dark');
+      toastHeader.className = 'bi bi-exclamation-circle me-1';
+    } else {
+      toast.classList.add('bg-info', 'text-white');
+      toastHeader.className = 'bi bi-info-circle me-1';
+    }
+
+    toastBody.textContent = msg;
+    var bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+  }
+
+  document.getElementById('loginForm').onsubmit = function(e) {
+    e.preventDefault();
+    var pwd = document.getElementById('loginPwd').value;
+    var errorDiv = document.getElementById('loginError');
+    var btn = document.getElementById('loginBtn');
+
+    errorDiv.classList.add('d-none');
+    btn.disabled = true;
+    btn.querySelector('.btn-text').classList.add('d-none');
+    btn.querySelector('.btn-loading').classList.remove('d-none');
+
+    fetch('/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.status === 'success') {
+        showToast('登录成功', 'success');
+        setTimeout(function() { window.location.reload(); }, 1000);
+      } else {
+        throw new Error(data.message || '登录失败');
+      }
+    })
+    .catch(function(err) {
+      console.error('登录失败:', err);
+      errorDiv.classList.remove('d-none');
+      document.getElementById('loginErrorMsg').textContent = err.message;
+    })
+    .finally(function() {
+      btn.disabled = false;
+      btn.querySelector('.btn-text').classList.remove('d-none');
+      btn.querySelector('.btn-loading').classList.add('d-none');
+    });
+  };
+
+  document.getElementById('pwdForm').onsubmit = function(e) {
+    e.preventDefault();
+    var oldPwd = document.getElementById('oldPwd').value;
+    var newPwd = document.getElementById('newPwd').value;
+    var confirmPwd = document.getElementById('confirmPwd').value;
+
+    if (!oldPwd || !newPwd || !confirmPwd) {
+      showToast('请填写所有密码项', 'warning');
+      return;
+    }
+    if (newPwd.length < 5) {
+      showToast('新密码至少5位', 'warning');
+      return;
+    }
+    if (newPwd !== confirmPwd) {
+      showToast('两次密码输入不一致', 'warning');
+      return;
+    }
+
+    fetch('/security/password', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ old_password: oldPwd, new_password: newPwd })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.status === 'success') {
+        showToast('密码修改成功', 'success');
+        document.getElementById('oldPwd').value = '';
+        document.getElementById('newPwd').value = '';
+        document.getElementById('confirmPwd').value = '';
+      } else {
+        throw new Error(data.message || '修改失败');
+      }
+    })
+    .catch(function(err) {
+      console.error('修改失败:', err);
+      showToast(err.message, 'danger');
+    });
+  };
+
+  document.getElementById('protectSwitch').onchange = function() {
+    if (needPwd) {
+      openModal('disable');
+    } else {
+      openModal('set');
+    }
+  };
+
+  function openModal(type) {
+    modalType = type;
+    var title = document.getElementById('modalTitle');
+    var desc = document.getElementById('modalDesc');
+    var pwd = document.getElementById('modalPwd');
+
+    pwd.value = '';
+
+    if (type === 'set') {
+      title.innerHTML = '<i class="bi bi-shield-plus me-2"></i>设置密码';
+      desc.textContent = '请输入新密码来启用登录密码保护';
+    } else if (type === 'enable') {
+      title.innerHTML = '<i class="bi bi-shield-check me-2"></i>确认开启';
+      desc.textContent = '您已有密码，确定要启用登录密码保护吗？';
+    } else if (type === 'disable') {
+      title.innerHTML = '<i class="bi bi-shield-x me-2"></i>确认关闭';
+      desc.textContent = '关闭后将清空密码，无需登录即可访问系统';
+    }
+
+    confirmModal.show();
+    setTimeout(function() { pwd.focus(); }, 100);
+  }
+
+  document.getElementById('modalOk').onclick = function() {
+    var pwd = document.getElementById('modalPwd').value;
+    if (!pwd) {
+      showToast('请输入密码', 'warning');
+      return;
+    }
+
+    if (modalType === 'set') {
+      fetch('/security/password', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ old_password: '', new_password: pwd })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.status === 'success') {
+          showToast('密码设置成功，保护已开启', 'success');
+          confirmModal.hide();
+          loadInfo();
+        } else {
+          throw new Error(data.message || '设置失败');
+        }
+      })
+      .catch(function(err) {
+        showToast(err.message, 'danger');
+      });
+    } else if (modalType === 'enable') {
+      fetch('/security/require_password', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ require_password: true, old_password: pwd })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        showToast('密码保护已开启', 'success');
+        confirmModal.hide();
+        loadInfo();
+      })
+      .catch(function(err) {
+        showToast(err.message, 'danger');
+      });
+} else if (modalType === 'disable') {
+    fetch('/security/password', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ old_password: pwd, new_password: '' })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.status === 'success') {
+        showToast('密码保护已关闭', 'success');
+        confirmModal.hide();
+        loadInfo();
+      } else {
+        throw new Error(data.message || '验证失败');
+      }
+    })
+    .catch(function(err) {
+      showToast(err.message, 'danger');
+    });
+  }
+  };
+
+  document.getElementById('modalPwd').onkeypress = function(e) {
+    if (e.key === 'Enter') {
+      document.getElementById('modalOk').click();
+    }
+  };
+})();
+</script>
+</body>
+</html>

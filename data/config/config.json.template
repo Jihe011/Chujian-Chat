@@ -1,0 +1,360 @@
+{
+    "categories": {
+        "user_settings": {
+            "title": "用户设置",
+            "settings": {
+                "listen_list": {
+                    "value": [],
+                    "type": "array",
+                    "description": "要监听的用户列表（请使用微信昵称，不要使用备注名）"
+                },
+                "group_chat_config": {
+                    "value": [],
+                    "type": "array",
+                    "description": "群聊配置列表（为不同群聊配置专用人设和触发词）"
+                }
+            }
+        },
+        "llm_settings": {
+            "title": "大语言模型配置",
+            "settings": {
+                "api_key": {
+                    "value": "YOUR_API_KEY_HERE",
+                    "type": "string",
+                    "description": "DeepSeek API密钥",
+                    "is_secret": true
+                },
+                "base_url": {
+                    "value": "https://api.deepseek.com/v1",
+                    "type": "string",
+                    "description": "DeepSeek API基础URL"
+                },
+                "model": {
+                    "value": "deepseek-chat",
+                    "type": "string",
+                    "description": "使用的AI模型名称",
+                    "options": [
+                        "deepseek-chat",
+                        "deepseek-coder"
+                    ]
+                },
+                "max_tokens": {
+                    "value": "2000",
+                    "type": "number",
+                    "description": "回复最大token数量"
+                },
+                "temperature": {
+                    "value": "1.1",
+                    "type": "number",
+                    "description": "AI回复的温度值",
+                    "min": 0.0,
+                    "max": 1.7
+                },
+                "auto_model_switch": {
+                    "value": false,
+                    "type": "boolean",
+                    "description": "是否使用备用模型"
+                }
+            }
+        },
+        "media_settings": {
+            "title": "媒体设置",
+            "settings": {
+                "image_recognition": {
+                    "api_key": {
+                        "value": "YOUR_API_KEY_HERE",
+                        "type": "string",
+                        "description": "图像识别API密钥",
+                        "is_secret": true
+                    },
+                    "base_url": {
+                        "value": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+                        "type": "string",
+                        "description": "图像识别API基础URL"
+                    },
+                    "temperature": {
+                        "value": 0.7,
+                        "type": "number",
+                        "description": "图像识别温度参数",
+                        "min": 0,
+                        "max": 1
+                    },
+                    "model": {
+                        "value": "qwen vl-plus",
+                        "type": "string",
+                        "description": "图像识别模型"
+                    }
+                },
+                "video_omni": {
+                    "enabled": {
+                        "value": false,
+                        "type": "boolean"
+                    },
+                    "api_key": {
+                        "value": "",
+                        "type": "string",
+                        "is_secret": true
+                    },
+                    "base_url": {
+                        "value": "",
+                        "type": "string"
+                    },
+                    "model": {
+                        "value": "qwen2.5-vl",
+                        "type": "string"
+                    },
+                    "method": {
+                        "value": "vision",
+                        "type": "string"
+                    },
+                    "public_url": {
+                        "value": "",
+                        "type": "string"
+                    },
+                    "fps": {
+                        "value": 2.0,
+                        "type": "number",
+                        "min": 0.1,
+                        "max": 10.0
+                    },
+                    "prompt": {
+                        "value": "请详细描述这个视频",
+                        "type": "string"
+                    }
+                },
+                "image_generation": {
+                    "model": {
+                        "value": "flux",
+                        "type": "string",
+                        "description": "图像生成模型"
+                    },
+                    "temp_dir": {
+                        "value": "data/images/temp",
+                        "type": "string",
+                        "description": "临时图片存储目录"
+                    }
+                },
+                "text_to_speech": {
+                    "tts_api_key": {
+                        "value": "",
+                        "type": "string",
+                        "description": "阿里云DashScope API Key",
+                        "is_secret": true
+                    },
+                    "tts_model_id": {
+                        "value": "",
+                        "type": "string",
+                        "description": "Fish Audio模型ID"
+                    },
+                    "voice_dir": {
+                        "value": "data/voices",
+                        "type": "string",
+                        "description": "语音文件存储目录"
+                    },
+                    "tts_model": {
+                        "value": "qwen3-tts-flash",
+                        "type": "string",
+                        "description": "TTS模型名称"
+                    },
+                    "voice": {
+                        "value": "Cherry",
+                        "type": "string",
+                        "description": "发音人"
+                    },
+                    "language_type": {
+                        "value": "Chinese",
+                        "type": "string",
+                        "description": "语言类型"
+                    },
+                    "tts_provider": {
+                        "value": "aliyun",
+                        "type": "string",
+                        "description": "TTS服务提供商"
+                    },
+                    "aliyun_tts_api_key": {
+                        "value": "",
+                        "type": "string",
+                        "description": "阿里云DashScope API密钥",
+                        "is_secret": true
+                    },
+                    "aliyun_tts_model": {
+                        "value": "qwen3-tts-flash",
+                        "type": "string",
+                        "description": "阿里云TTS模型"
+                    },
+                    "aliyun_voice": {
+                        "value": "Cherry",
+                        "type": "string",
+                        "description": "阿里云TTS音色"
+                    },
+                    "aliyun_language_type": {
+                        "value": "Chinese",
+                        "type": "string",
+                        "description": "阿里云TTS语种"
+                    }
+                }
+            }
+        },
+        "network_search_settings": {
+            "title": "网络搜索设置",
+            "settings": {
+                "search_enabled": {
+                    "value": false,
+                    "type": "boolean",
+                    "description": "启用网络搜索功能"
+                },
+                "weblens_enabled": {
+                    "value": false,
+                    "type": "boolean",
+                    "description": "启用网页内容提取功能"
+                },
+                "api_key": {
+                    "value": "",
+                    "type": "string",
+                    "description": "网络搜索 API 密钥",
+                    "is_secret": true
+                },
+                "base_url": {
+                    "value": "",
+                    "type": "string",
+                    "description": "网络搜索 API 基础 URL"
+                }
+            }
+        },
+        "intent_recognition_settings": {
+            "title": "意图识别配置",
+            "settings": {
+                "api_key": {
+                    "value": "",
+                    "type": "string",
+                    "is_secret": true,
+                    "description": "意图识别API密钥"
+                },
+                "base_url": {
+                    "value": "",
+                    "type": "string",
+                    "description": "意图识别API基础URL"
+                },
+                "model": {
+                    "value": "",
+                    "type": "string",
+                    "description": "意图识别使用的AI模型名称"
+                },
+                "temperature": {
+                    "value": 0.7,
+                    "type": "number",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "description": "意图识别温度参数"
+                }
+            }
+        },
+        "behavior_settings": {
+            "title": "行为设置",
+            "settings": {
+                "auto_message": {
+                    "content": {
+                        "value": "",
+                        "type": "string",
+                        "description": "自动消息内容"
+                    },
+                    "countdown": {
+                        "min_hours": {
+                            "value": 0.5,
+                            "type": "number",
+                            "description": "最小倒计时时间（小时）"
+                        },
+                        "max_hours": {
+                            "value": 2.0,
+                            "type": "number",
+                            "description": "最大倒计时时间（小时）"
+                        }
+                    }
+                },
+                "message_queue": {
+                    "timeout": {
+                        "value": 10,
+                        "type": "number",
+                        "description": "消息队列等待时间（秒）"
+                    }
+                },
+                "quiet_time": {
+                    "start": {
+                        "value": "22:00",
+                        "type": "string",
+                        "description": "安静时间开始"
+                    },
+                    "end": {
+                        "value": "08:00",
+                        "type": "string",
+                        "description": "安静时间结束"
+                    }
+                },
+                "context": {
+                    "max_groups": {
+                        "value": 20,
+                        "type": "number",
+                        "description": "最大上下文轮数"
+                    },
+                    "avatar_dir": {
+                        "value": "data/avatars/default",
+                        "type": "string",
+                        "description": "人设目录"
+                    }
+                }
+            }
+        },
+        "auth_settings": {
+            "title": "认证设置",
+            "settings": {
+                "admin_password": {
+                    "value": "",
+                    "type": "string",
+                    "description": "管理员密码",
+                    "is_secret": true
+                },
+                "require_password": {
+                    "value": true
+                }
+            }
+        },
+        "schedule_settings": {
+            "title": "定时任务配置",
+            "settings": {
+                "tasks": {
+                    "value": [],
+                    "type": "array",
+                    "description": "定时任务列表"
+                }
+            }
+        },
+        "personalization": {
+            "title": "个性化设置",
+            "settings": {
+                "icon_type": {
+                    "value": "default",
+                    "type": "string",
+                    "description": "图标头像类型"
+                },
+                "hero_type": {
+                    "value": "default",
+                    "type": "string",
+                    "description": "大字头像类型"
+                }
+            }
+        },
+        "wechat_settings": {
+            "title": "微信控制设置",
+            "settings": {
+                "wechat_version": {
+                    "value": "3.9",
+                    "type": "string"
+                },
+                "wechat_lib": {
+                    "value": "",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

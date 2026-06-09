@@ -1,0 +1,10 @@
+{
+  "cloud_api": {
+    "enabled": true,
+    "update_api_urls": [
+      "https://raw.githubusercontent.com/Jihe011/Chujian-Chat/main/version.json",
+      "https://gh-proxy.com/https://raw.githubusercontent.com/Jihe011/Chujian-Chat/main/version.json"
+    ],
+    "timeout": 5
+  }
+}

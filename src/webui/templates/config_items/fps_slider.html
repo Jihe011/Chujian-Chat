@@ -1,0 +1,23 @@
+<!-- FPS参数滑块组件 -->
+<div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span>当前值: <strong id="fps_display" class="temperature-value">2.0</strong></span>
+        <span class="badge bg-primary">FPS参数</span>
+    </div>
+    <input type="range" id="fps_input" class="temperature-slider" min="0.1" max="10" step="0.1" value="2.0">
+    <div class="d-flex justify-content-between mt-1">
+        <span class="small text-muted">低 (长视频/静态场景)</span>
+        <span class="small text-muted">高 (高速运动场景)</span>
+    </div>
+    <input type="hidden" id="VIDEO_OMNI_FPS" name="VIDEO_OMNI_FPS" value="2.0">
+</div>
+
+<script>
+console.log('FPS slider script loaded');
+document.getElementById('fps_input').addEventListener('input', function() {
+    var val = parseFloat(this.value).toFixed(1);
+    document.getElementById('fps_display').textContent = val;
+    document.getElementById('VIDEO_OMNI_FPS').value = val;
+    console.log('FPS value changed to:', val);
+});
+</script>

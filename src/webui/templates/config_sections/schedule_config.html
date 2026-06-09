@@ -1,0 +1,28 @@
+<!-- 定时任务配置部分 -->
+<div class="config-card mb-4">
+  <div class="config-card-header">
+    <span class="config-card-title">
+      <i class="bi bi-clock me-2"></i>定时任务
+    </span>
+  </div>
+  <div class="config-card-body">
+    <input type="hidden" id="TASKS" name="TASKS" value='{{ tasks_json|safe }}'>
+
+    <div class="d-grid gap-2 mb-3">
+      <a href="#" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+        <i class="bi bi-plus-lg me-2"></i>添加定时任务
+      </a>
+    </div>
+
+    <div class="d-grid gap-2 mb-3">
+      <a href="#" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#taskListModal">
+        <i class="bi bi-list-ul me-2"></i>任务列表管理
+      </a>
+    </div>
+
+    <div class="config-card-description">
+      <i class="bi bi-info-circle me-1"></i>
+      可以添加定时发送消息的任务，支持 Cron 表达式和时间间隔两种方式
+    </div>
+  </div>
+</div>

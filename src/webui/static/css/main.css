@@ -1,0 +1,653 @@
+/* ============================================
+   初见 WebUI - 清新淡雅主题样式
+   ============================================ */
+
+/* ========== 1. CSS 变量定义 ========== */
+:root {
+  /* 主色调 - 清新蓝紫 */
+  --primary: #818cf8;
+  --primary-dark: #6366f1;
+  --primary-light: #a5b4fc;
+  
+  /* 背景 - 温暖的灰白 */
+  --bg-main: #fafbfc;
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-glass: rgba(255, 255, 255, 0.75);
+  --bg-overlay: rgba(255, 255, 255, 0.85);
+  
+  /* 文字 */
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  
+  /* 强调色 - 心动粉 */
+  --accent: #f43f5e;
+  --accent-soft: #fda4af;
+  --accent-light: #ffe4e6;
+  
+  /* 状态色 */
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  
+  /* 边框 */
+  --border: rgba(0, 0, 0, 0.08);
+  --border-light: rgba(0, 0, 0, 0.04);
+  
+  /* 圆角 */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* 过渡 */
+  --transition-fast: 150ms ease;
+  --transition: 250ms ease;
+  --transition-slow: 400ms ease;
+  
+  /* 字体 */
+  --font-sans: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+/* 暗色模式 */
+[data-bs-theme="dark"] {
+  --bg-main: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.92);
+  --bg-glass: rgba(30, 41, 59, 0.75);
+  --bg-overlay: rgba(15, 23, 42, 0.9);
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-light: #64748b;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.04);
+}
+
+/* ========== 2. 全局重置 ========== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.6;
+  transition: background-color var(--transition), color var(--transition);
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(ellipse at top left, rgba(129, 140, 248, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(244, 63, 94, 0.05) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* ========== 3. 毛玻璃卡片 ========== */
+.glass-panel,
+.glass-card,
+.info-card,
+.modal-content,
+.modal-header,
+.modal-footer,
+.modal-body {
+  background: var(--bg-card);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition);
+}
+
+.glass-panel:hover,
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.info-card {
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+}
+
+.info-card:hover {
+  transform: translateY(-1px);
+}
+
+/* ========== 4. 按钮样式 ========== */
+.btn {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 主按钮 */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+  box-shadow: 0 4px 12px rgba(129, 140, 248, 0.4);
+}
+
+/* 次按钮 - 毛玻璃风格 */
+.btn-glass {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.btn-glass:hover {
+  background: var(--bg-overlay);
+  box-shadow: var(--shadow);
+  border-color: var(--primary);
+}
+
+/* 微信按钮 */
+.btn-wechat {
+  background: linear-gradient(135deg, #07C160 0%, #06ad56 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.btn-wechat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(7, 193, 96, 0.4);
+  background: linear-gradient(135deg, #06ad56 0%, #059c4d 100%);
+}
+
+/* 状态按钮 */
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info {
+  border: none;
+}
+
+.text-success { color: var(--success) !important; }
+.text-danger { color: var(--danger) !important; }
+.text-warning { color: var(--warning) !important; }
+.text-primary { color: var(--primary) !important; }
+
+/* ========== 5. 表单样式 ========== */
+.form-control,
+.form-select {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  transition: all var(--transition);
+  padding: 0.625rem 1rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: var(--bg-overlay);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+}
+
+.form-control::placeholder {
+  color: var(--text-light);
+}
+
+/* 开关 */
+.form-check-input {
+  width: 2.5em;
+  height: 1.25em;
+  background-color: var(--border-light);
+  border: 1px solid var(--border);
+  border-radius: 1.25em;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+}
+
+/* 滑块 */
+.form-range::-webkit-slider-thumb {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.form-range::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.2);
+}
+
+/* ========== 6. 进度条 ========== */
+.progress {
+  height: 0.5rem;
+  background: var(--border-light);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.progress-bar {
+  transition: width 500ms ease;
+}
+
+/* ========== 7. 导航栏 ========== */
+.navbar {
+  background: var(--bg-glass) !important;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+  font-weight: 600;
+  color: var(--text-main) !important;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  border-radius: var(--radius-md);
+  transition: all var(--transition);
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--primary);
+  background: rgba(129, 140, 248, 0.1);
+}
+
+/* ========== 8. 列表组 ========== */
+.list-group-item {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-muted);
+  border-radius: var(--radius-md) !important;
+  transition: all var(--transition);
+}
+
+.list-group-item:hover {
+  background: var(--bg-glass);
+  color: var(--text-main);
+  transform: translateX(4px);
+}
+
+/* ========== 9. 徽章 ========== */
+.badge {
+  padding: 0.4em 0.8em;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+/* ========== 10. 模态框 ========== */
+.modal-content {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.modal-header,
+.modal-footer {
+  border-color: var(--border);
+}
+
+.btn-close {
+  filter: var(--text-muted);
+}
+
+/* ========== 11. Toast 通知 ========== */
+.toast {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+/* ========== 12. 文字颜色 ========== */
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+.text-light {
+  color: var(--text-light) !important;
+}
+
+/* ========== 13. 动画辅助类 ========== */
+.animate-in {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.animate-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 计数器动画 */
+.counter {
+  display: inline-block;
+}
+
+/* 打字机效果 */
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 3s steps(40, end),
+             blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--primary); }
+}
+
+/* ========== 14. 日志容器 ========== */
+.log-container {
+  height: 400px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  scroll-behavior: smooth;
+}
+
+.log-line {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border-light);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  animation: fadeInUp 200ms ease;
+}
+
+.log-timestamp {
+  color: var(--text-light);
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+/* ========== 15. 控制台输入 ========== */
+.console-input-area {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.console-input-area .input-group {
+  background: transparent;
+}
+
+.console-input-area .form-control {
+  background: transparent;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  border: none;
+}
+
+.console-input-area .form-control:focus {
+  box-shadow: none;
+  background: transparent;
+}
+
+.console-input-area .input-group-text {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+}
+
+/* ========== 16. 状态指示器 ========== */
+.status-badge {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.status-badge::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.status-running::before {
+  background-color: var(--success);
+  box-shadow: 0 0 8px var(--success);
+}
+
+.status-stopped::before {
+  background-color: var(--danger);
+}
+
+/* ========== 17. 页脚 ========== */
+footer.glass-panel {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  margin-top: 3rem;
+}
+
+/* ========== 18. 响应式 ========== */
+@media (max-width: 768px) {
+  .glass-panel,
+  .info-card {
+    border-radius: var(--radius-md);
+    padding: 1rem;
+  }
+  
+  .log-container {
+    height: 250px;
+  }
+}
+
+/* ========== 19. 滚动条美化 ========== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-light);
+}
+
+/* ========== 20. 链接 ========== */
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--primary-dark);
+}
+
+/* ========== 21. 下拉菜单 ========== */
+.dropdown-menu {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.dropdown-item {
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.dropdown-item:hover {
+  background: var(--bg-glass);
+  color: var(--text-main);
+}
+
+/* ========== 22. 标签页 ========== */
+.nav-tabs {
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-tabs .nav-link {
+  color: var(--text-muted);
+  border: none;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  padding: 0.75rem 1.25rem;
+  transition: all var(--transition);
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--text-main);
+  background: var(--bg-glass);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary);
+  background: var(--bg-card);
+  border-bottom: 2px solid var(--primary);
+}
+
+/* ========== 23. 警告框 ========== */
+.alert {
+  border-radius: var(--radius-md);
+  border: none;
+}
+
+.alert-info {
+  background: var(--info-light);
+  color: var(--info);
+}
+
+.alert-success {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.alert-warning {
+  background: var(--warning-light);
+  color: var(--warning);
+}
+
+.alert-danger {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+/* ========== 24. 加载动画 ========== */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* ========== 25. 动画辅助 ========== */
+.fade-in {
+  animation: fadeIn 300ms ease;
+}
+
+.slide-up {
+  animation: slideUp 400ms ease;
+}
+
+.scale-in {
+  animation: scaleIn 300ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ========== 26. 空状态 ========== */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-light);
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}

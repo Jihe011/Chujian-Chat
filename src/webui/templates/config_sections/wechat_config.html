@@ -1,0 +1,160 @@
+<!-- 微信控制设置独立配置块 -->
+<!-- 使用页面传递的 config_groups 变量来获取配置 -->
+{% set wechat_version = '' %}
+{% set wechat_lib = '' %}
+{% if config_groups and '微信控制设置' in config_groups %}
+    {% set wechat_version = config_groups['微信控制设置'].get('WECHAT_VERSION', {}).get('value', '3.9') %}
+    {% set wechat_lib = config_groups['微信控制设置'].get('WECHAT_LIB', {}).get('value', '') %}
+{% endif %}
+<!-- DEBUG: 模板读取到的值: wechat_version={{wechat_version}}, wechat_lib={{wechat_lib}} -->
+
+<!-- 保存当前值到隐藏字段，供JavaScript读取 -->
+<input type="hidden" id="wechat_version_current" value="{{ wechat_version }}">
+<input type="hidden" id="wechat_lib_current" value="{{ wechat_lib }}">
+
+<div class="accordion mb-3">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#wechat-config">
+                微信控制设置
+            </button>
+        </h2>
+        <div id="wechat-config" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <!-- 微信版本选择 -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <span class="badge badge-info rounded-pill me-2">
+                            <i class="bi bi-info-circle"></i>
+                        </span>
+                        微信版本（选择后自动选择对应库）
+                    </label>
+                    <select class="form-select" id="WECHAT_VERSION" name="WECHAT_VERSION" onchange="updateWechatSelect()">
+                        <option value="3.9" {% if wechat_version == '3.9' %}selected{% endif %}>微信 3.9</option>
+                        <option value="4.1+" {% if wechat_version == '4.1+' %}selected{% endif %}>微信 4.1+</option>
+                    </select>
+                </div>
+
+                <!-- 微信库选择 -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <span class="badge badge-info rounded-pill me-2">
+                            <i class="bi bi-info-circle"></i>
+                        </span>
+                        微信控制库（留空则根据版本自动选择）
+                    </label>
+                    <select class="form-select" id="WECHAT_LIB" name="WECHAT_LIB" onchange="updateWechatSelect()">
+                        <option value="" {% if wechat_lib == '' %}selected{% endif %}>自动（根据版本）</option>
+                        <option value="wxauto" {% if wechat_lib == 'wxauto' %}selected{% endif %}>wxauto</option>
+                        <option value="pyweixin" {% if wechat_lib == 'pyweixin' %}selected{% endif %}>pyweixin</option>
+                    </select>
+                </div>
+
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    当前选择：{% if wechat_lib %}{{ wechat_lib }}{% else %}{% if wechat_version == '4.1+' %}pyweixin{% else %}wxauto{% endif %}{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var wechatVersionFromServer = "{{ wechat_version }}";
+var wechatLibFromServer = "{{ wechat_lib }}";
+var savedWechatVersion = wechatVersionFromServer;
+var savedWechatLib = wechatLibFromServer;
+console.log('从服务器读取: wechatVersionFromServer =', wechatVersionFromServer, ', wechatLibFromServer =', wechatLibFromServer);
+
+// 保存用户选择的值
+function saveWechatSelections() {
+    var versionSelect = document.getElementById('WECHAT_VERSION');
+    var libSelect = document.getElementById('WECHAT_LIB');
+    
+    if (versionSelect) {
+        savedWechatVersion = versionSelect.value;
+    }
+    if (libSelect) {
+        savedWechatLib = libSelect.value;
+    }
+    console.log('保存选择: savedWechatVersion =', savedWechatVersion, ', savedWechatLib =', savedWechatLib);
+}
+
+// 设置选择框的初始值
+function setInitialWechatValues() {
+    var versionSelect = document.getElementById('WECHAT_VERSION');
+    var libSelect = document.getElementById('WECHAT_LIB');
+    
+    if (versionSelect && wechatVersionFromServer) {
+        versionSelect.value = wechatVersionFromServer;
+        savedWechatVersion = wechatVersionFromServer;
+        console.log('设置 WECHAT_VERSION =', wechatVersionFromServer);
+    }
+    if (libSelect && wechatLibFromServer) {
+        libSelect.value = wechatLibFromServer;
+        savedWechatLib = wechatLibFromServer;
+        console.log('设置 WECHAT_LIB =', wechatLibFromServer);
+    }
+}
+
+// 确保选择框值正确
+function updateWechatSelect() {
+    var versionSelect = document.getElementById('WECHAT_VERSION');
+    var libSelect = document.getElementById('WECHAT_LIB');
+    if (versionSelect) {
+        versionSelect.classList.add('form-select');
+    }
+    if (libSelect) {
+        libSelect.classList.add('form-select');
+    }
+}
+
+// 页面加载后立即执行 - 优先设置初始值
+document.addEventListener('DOMContentLoaded', function() {
+    setInitialWechatValues();
+    updateWechatSelect();
+    console.log('微信控制设置初始化完成');
+});
+
+// 定期检查并修复（防止被覆盖）
+setInterval(updateWechatSelect, 500);
+
+// 保存前收集微信设置 - 使用保存的值
+function collectWechatConfig(config) {
+    // 首先保存当前选择
+    saveWechatSelections();
+    
+    console.log('collectWechatConfig: savedWechatVersion =', savedWechatVersion, ', savedWechatLib =', savedWechatLib);
+    
+    // 强制从 select 元素读取当前值
+    var versionSelect = document.getElementById('WECHAT_VERSION');
+    var libSelect = document.getElementById('WECHAT_LIB');
+    
+    if (versionSelect) {
+        savedWechatVersion = versionSelect.value;
+        console.log('从select读取: versionSelect.value =', versionSelect.value);
+    }
+    if (libSelect) {
+        savedWechatLib = libSelect.value;
+        console.log('从select读取: libSelect.value =', libSelect.value);
+    }
+    
+    config['WECHAT_VERSION'] = savedWechatVersion;
+    config['WECHAT_LIB'] = savedWechatLib;
+    console.log('最终保存配置: WECHAT_VERSION =', savedWechatVersion, ', WECHAT_LIB =', savedWechatLib);
+}
+
+// 覆盖 saveConfig 函数，在保存前添加微信设置
+const originalSaveConfig = window.saveConfig;
+window.saveConfig = function(config) {
+    if (!config) {
+        config = {};
+    }
+    collectWechatConfig(config);
+    console.log('最终保存配置:', config);
+    if (typeof originalSaveConfig === 'function') {
+        return originalSaveConfig(config);
+    }
+};
+</script>

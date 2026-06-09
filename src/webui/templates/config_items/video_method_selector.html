@@ -1,0 +1,10 @@
+<!-- 视频理解方式选择器 -->
+<div class="mb-3">
+    <select class="form-select" id="VIDEO_OMNI_METHOD" name="VIDEO_OMNI_METHOD">
+        <option value="full_modal" {% if config.value == 'full_modal' %}selected{% endif %}>全模态（支持音频）</option>
+        <option value="vision" {% if config.value == 'vision' %}selected{% endif %}>视觉理解（抽帧方式）</option>
+    </select>
+    <div class="form-text">
+        {% if config.value == 'full_modal' %}通过Base64方式传入视频，可理解视频中的音频内容{% else %}通过DashScope SDK传入本地视频路径，自动抽帧理解（不支持音频）{% endif %}
+    </div>
+</div>
